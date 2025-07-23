@@ -139,12 +139,11 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 # Cypress
-/cypress/videos/
-/cypress/screenshots/
+/ui/cypress/videos/
+/ui/cypress/screenshots/
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+.vscode
 .idea
 *.suo
 *.ntvs*
