@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+management.endpoints.web.exposure.include: health,info
+management.endpoint.health.probes.enabled: true
+management.health.livenessState.enabled: true
+management.health.readinessState.enabled: true
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging:
+  level:
+    io.labs64: DEBUG
+    org.springframework.cloud.stream: INFO
+
+pipelines: []
+#  - name: 'logs'
+#    enabled: true
+#    transformer:
+#      name: 'zero'
+#    processor:
+#      name: 'logging_processor'
+#      clazz: 'io.labs64.ecommerce.processors.LoggingProcessor'
+#      properties:
+#        log-level: "DEBUG"
+
+spring:
+  application:
+    name: labs64.io-ecommerce
+  cloud:
+    stream:
+      bindings:
+        ecommerce-out-0:
+          destination: labs64-ecommerce-topic
+          binder: rabbit
+        ecommerce-in-0:
+          destination: labs64-ecommerce-topic
+          binder: rabbit
+      binders:
+        rabbit:
+          type: rabbit
+      rabbit:
+        bindings:
+          ecommerce-out-0:
+            producer:
+              exchangeType: topic
+          ecommerce-in-0:
+            consumer:
+              autoBindDlq: true
+
+  rabbitmq:
+    host: rabbitmq.default.svc.cluster.local
+    port: 5672
+    username:
+    password:
