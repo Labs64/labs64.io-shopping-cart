@@ -1,9 +1,0 @@
-io/labs64/ecommerce/v1/api/ShoppingCartApi.class
-io/labs64/ecommerce/controller/ecommerce/v1/ShoppingCartController.class
-io/labs64/ecommerce/publisher/ShoppingCartPublisherService.class
-io/labs64/ecommerce/v1/model/ShoppingCart.class
-io/labs64/ecommerce/v1/model/CartItem.class
-io/labs64/ecommerce/v1/api/ApiUtil.class
-io/labs64/ecommerce/EcommerceApplication.class
-io/labs64/ecommerce/subscriber/ShoppingCartSubscriberService.class
-io/labs64/ecommerce/v1/model/ErrorResponse.class
