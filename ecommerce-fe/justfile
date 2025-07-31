@@ -1,0 +1,5 @@
+APP_NAME := "ecommerce"
+
+# build application
+build:
+    npm ci
