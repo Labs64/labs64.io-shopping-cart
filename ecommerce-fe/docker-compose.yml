@@ -2,7 +2,5 @@ services:
   ecommerce:
     build: .
     ports:
-      - "8081:80"
-    volumes:
-      - ./dist:/usr/share/nginx/html:ro
+      - "8080:80"
     restart: unless-stopped
