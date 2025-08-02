@@ -5,7 +5,7 @@
 
 ![Docker Image Version](https://img.shields.io/docker/v/labs64/ecommerce?logo=docker&logoColor=%23E14817&color=%23E14817) - TODO
 
-TODO
+Robust e-commerce engine designed to accelerate digital sales. Features include product catalogs, shopping carts, secure checkout, and order management — all seamlessly integrated to drive conversion and revenue growth.
 
 ## Key Features
 
