@@ -1,7 +1,7 @@
 <p align="center"><img src="https://raw.githubusercontent.com/Labs64/.github/refs/heads/master/assets/labs64-io-ecosystem.png"></p>
 
 # Labs64.IO :: eCommerce
-## Commerce-ready platform to streamline online sales pipelines
+## Commerce-Ready Platform for Digital Sales Enablement
 
 ![Docker Image Version](https://img.shields.io/docker/v/labs64/ecommerce?logo=docker&logoColor=%23E14817&color=%23E14817) - TODO
 
