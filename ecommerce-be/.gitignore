@@ -201,4 +201,4 @@ README.html
 .exercism
 
 # Local Spring Boot config
-src/main/resources/application-local.yaml
+src/main/resources/application-local.yml
