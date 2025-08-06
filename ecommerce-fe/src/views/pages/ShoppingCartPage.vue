@@ -60,11 +60,15 @@
 <script lang="ts" setup>
 import { computed, ref, onMounted, watch } from 'vue';
 
+// composable
+import useEnv from '@/composables/useEnv';
+
 // stores
 import useCartShop from '@/stores/cart';
 
 // types
 import type { CartItem } from '@/types/services/api/cart';
+
 
 defineOptions({
   name: 'ShoppingCartPage',
@@ -76,6 +80,9 @@ const props = defineProps<{
 
 // stores
 const cartShop = useCartShop();
+
+// env
+const { getEnv } = useEnv();
 
 // state
 const selectedPaymentMethod = ref('');
@@ -114,5 +121,7 @@ onMounted(async () => {
       loading.value = false;
     }
   }
+
+  console.warn(getEnv('VITE_BASE_API_URL'))
 });
 </script>

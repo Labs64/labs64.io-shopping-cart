@@ -10,6 +10,12 @@ const routes: Routes = [
       code: route.query.code ?? '',
     }),
   },
+
+  {
+    path: '/500',
+    name: '500',
+    component: () => import('@/views/pages/500Page.vue'),
+  },
 ];
 
 export default routes;
