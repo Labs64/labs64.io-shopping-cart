@@ -199,3 +199,6 @@ README.html
 *.iml
 .idea
 .exercism
+
+# Local Spring Boot config
+**/application-local.yaml
