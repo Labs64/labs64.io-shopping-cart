@@ -1,12 +1,13 @@
 package io.labs64.ecommerce.controller.ecommerce.v1;
 
-import io.labs64.ecommerce.v1.api.ShoppingCartApi;
-import io.labs64.ecommerce.v1.model.ShoppingCart;
-import io.labs64.ecommerce.publisher.ShoppingCartPublisherService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.labs64.ecommerce.publisher.ShoppingCartPublisherService;
+import io.labs64.ecommerce.v1.api.ShoppingCartApi;
+import io.labs64.ecommerce.v1.model.ShoppingCart;
 
 @RestController
 @RequestMapping("/api/v1")

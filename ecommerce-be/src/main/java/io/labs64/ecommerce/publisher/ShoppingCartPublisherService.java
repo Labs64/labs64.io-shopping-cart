@@ -1,13 +1,14 @@
 package io.labs64.ecommerce.publisher;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class ShoppingCartPublisherService {
@@ -17,7 +18,7 @@ public class ShoppingCartPublisherService {
     public static final String ECOMMERCE_OUT_0 = "ecommerce-out-0";
 
     private final StreamBridge streamBridge;
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public ShoppingCartPublisherService(StreamBridge streamBridge, ObjectMapper objectMapper) {

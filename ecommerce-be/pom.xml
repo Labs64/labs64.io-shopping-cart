@@ -25,7 +25,7 @@
         <logstash.version>8.1</logstash.version>
         <springdoc.version>2.8.9</springdoc.version>
         <openapitools.version>0.2.6</openapitools.version>
-        <junit-jupiter.version.version>5.13.4</junit-jupiter.version.version>
+        <junit-jupiter.version>5.13.4</junit-jupiter.version>
         <jackson-datatype-jsr310.version>2.19.2</jackson-datatype-jsr310.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <kubernetes-client.version>7.3.1</kubernetes-client.version>
@@ -33,10 +33,13 @@
         <netty-handler.version>4.2.3.Final</netty-handler.version>
         <opentelemetry-exporter-otlp.version>1.52.0</opentelemetry-exporter-otlp.version>
         <micrometer-tracing.version>1.5.2</micrometer-tracing.version>
+        <labs64.code-formatting.version>1.0.0</labs64.code-formatting.version>
         <!-- PLUGINS -->
         <maven-enforcer-plugin.version>3.6.1</maven-enforcer-plugin.version>
         <openapi-generator-maven-plugin.version>7.14.0</openapi-generator-maven-plugin.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
+        <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
+        <spotless-maven-plugin.version>2.44.0</spotless-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -153,7 +156,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${junit-jupiter.version.version}</version>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -229,6 +232,54 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>unpack-formatting-config</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.labs64.commons</groupId>
+                                    <artifactId>code-formatting</artifactId>
+                                    <version>${labs64.code-formatting.version}</version>
+                                    <type>zip</type>
+                                    <outputDirectory>${project.build.directory}/formatting</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <java>
+                        <importOrder>
+                            <file>${project.build.directory}/formatting/labs64.importorder</file>
+                        </importOrder>
+                        <eclipse>
+                            <file>${project.build.directory}/formatting/labs64_eclipse_formatter.xml</file>
+                        </eclipse>
+                    </java>
+                </configuration>
             </plugin>
         </plugins>
     </build>
