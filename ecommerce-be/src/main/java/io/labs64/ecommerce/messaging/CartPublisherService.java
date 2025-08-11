@@ -1,4 +1,4 @@
-package io.labs64.ecommerce.publisher;
+package io.labs64.ecommerce.messaging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Service
-public class ShoppingCartPublisherService {
+import io.labs64.ecommerce.v1.model.Cart;
 
-    private static final Logger logger = LoggerFactory.getLogger(ShoppingCartPublisherService.class);
+@Service
+public class CartPublisherService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CartPublisherService.class);
 
     public static final String ECOMMERCE_OUT_0 = "ecommerce-out-0";
 
@@ -21,12 +23,12 @@ public class ShoppingCartPublisherService {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public ShoppingCartPublisherService(StreamBridge streamBridge, ObjectMapper objectMapper) {
+    public CartPublisherService(StreamBridge streamBridge, ObjectMapper objectMapper) {
         this.streamBridge = streamBridge;
         this.objectMapper = objectMapper;
     }
 
-    public boolean publishCart(io.labs64.ecommerce.v1.model.ShoppingCart cart) {
+    public boolean publishCart(Cart cart) {
         String json;
         try {
             json = objectMapper.writeValueAsString(cart);

@@ -55,3 +55,16 @@ spring:
     port: 5672
     username:
     password:
+
+  data:
+    redis:
+      host: redis-master.default.svc.cluster.local
+      port: 6379
+      timeout: 60000
+      password: ""
+      database: 0
+      ssl:
+        enabled: true
+
+cart:
+  ttl-hours: 6

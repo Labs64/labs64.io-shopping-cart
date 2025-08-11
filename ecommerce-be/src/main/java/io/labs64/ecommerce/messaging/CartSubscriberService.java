@@ -1,4 +1,4 @@
-package io.labs64.ecommerce.subscriber;
+package io.labs64.ecommerce.messaging;
 
 import java.util.function.Consumer;
 
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.PostConstruct;
 
 @Component
-public class ShoppingCartSubscriberService {
+public class CartSubscriberService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ShoppingCartSubscriberService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CartSubscriberService.class);
 
     @PostConstruct
     public void init() {

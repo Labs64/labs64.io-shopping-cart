@@ -147,6 +147,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -209,6 +215,7 @@
                                 <useTags>true</useTags>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useSpringBoot3>true</useSpringBoot3>
+                                <unhandledException>false</unhandledException>
                             </configOptions>
                         </configuration>
                     </execution>

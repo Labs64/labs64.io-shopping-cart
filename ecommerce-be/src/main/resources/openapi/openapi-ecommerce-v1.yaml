@@ -15,7 +15,7 @@ paths:
       summary: Store shopping cart
       operationId: saveCart
       tags:
-        - Shopping Cart
+        - Cart
       description: Receives a complete shopping cart entity to initiate the shopping cart.
       requestBody:
         description: The complete shopping cart entity to be processed.
@@ -23,7 +23,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ShoppingCart'
+              $ref: '#/components/schemas/Cart'
             example:
               cartId: "abcd1234-efgh-5678-ijkl-901234567890"
               userId: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
@@ -39,12 +39,12 @@ paths:
               totalItems: 3
               totalAmount: 1250.00
       responses:
-        '200':
+        '201':
           description: Shopping Cart published successfully
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
+                $ref: '#/components/schemas/Cart'
         '500':
           description: Failed to publish Shopping Cart
           content:
@@ -56,7 +56,7 @@ paths:
       summary: Retrieve a shopping cart by its ID
       operationId: getCartById
       tags:
-        - Shopping Cart
+        - Cart
       description: Fetches the details of a specific shopping cart using its unique identifier.
       parameters:
         - name: cartId
@@ -73,7 +73,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ShoppingCart'
+                $ref: '#/components/schemas/Cart'
         '404':
           description: Shopping cart with the specified ID not found.
           content:
@@ -83,6 +83,8 @@ paths:
               example:
                 code: "CART_NOT_FOUND"
                 message: "Shopping cart with ID 'abcd1234-efgh-5678-ijkl-901234567890' not found."
+                timestamp: "2025-08-07T12:34:56.123Z"
+                traceId: "abc123xyz"
         '500':
           description: Internal server error (e.g., failed to retrieve cart data).
           content:
@@ -91,7 +93,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    ShoppingCart:
+    Cart:
       type: object
       description: Represents a shopping cart.
       required:
@@ -167,3 +169,11 @@ components:
           type: string
           description: A human-readable error message.
           example: "The provided cart data is invalid or empty."
+        timestamp:
+          type: string
+          format: date-time
+          example: 2025-08-07T12:34:56.123Z
+        traceId:
+          type: string
+          description: Request correlation ID
+          example: "abc123xyz"
