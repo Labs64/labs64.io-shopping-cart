@@ -50,6 +50,11 @@ spring:
             consumer:
               autoBindDlq: true
 
+  messages:
+    basename: messages
+    fallback-to-system-locale: false
+    encoding: UTF-8
+
   rabbitmq:
     host: rabbitmq.default.svc.cluster.local
     port: 5672
@@ -67,4 +72,5 @@ spring:
         enabled: true
 
 cart:
-  ttl-hours: 6
+  prefix: "ecommerce:cart:"
+  ttl: PT6H

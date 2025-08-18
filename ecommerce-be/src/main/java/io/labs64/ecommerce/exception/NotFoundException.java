@@ -10,8 +10,8 @@ import lombok.Getter;
 public class NotFoundException extends RuntimeException {
     private final ErrorCode errorCode;
 
-    public NotFoundException(ErrorCode errorCode, String message) {
+    public NotFoundException(String message) {
         super(message);
-        this.errorCode = errorCode;
+        this.errorCode = ErrorCode.NOT_FOUND;
     }
 }

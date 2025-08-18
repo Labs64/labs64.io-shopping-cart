@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.labs64.ecommerce.v1.model.Cart;
+import io.labs64.ecommerce.v1.entity.Cart;
 
 @Service
 public class CartPublisherService {
