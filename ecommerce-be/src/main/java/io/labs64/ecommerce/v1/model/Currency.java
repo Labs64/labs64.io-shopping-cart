@@ -1,4 +1,4 @@
-package io.labs64.ecommerce.v1.entity;
+package io.labs64.ecommerce.v1.model;
 
 public enum Currency {
     USD, EUR;

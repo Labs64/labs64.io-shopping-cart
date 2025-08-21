@@ -204,6 +204,38 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
             <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>labs64.io-ecommerce</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/openapi-ecommerce-${ecommerce.version}.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <output>${project.build.directory}/generated-sources</output>
+                            <apiPackage>io.labs64.ecommerce.${ecommerce.version}.api</apiPackage>
+                            <modelPackage>io.labs64.ecommerce.${ecommerce.version}.model</modelPackage>
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <configOptions>
+                                <useTags>true</useTags>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <unhandledException>false</unhandledException>
+                                <containerDefaultToNull>true</containerDefaultToNull>
+                            </configOptions>
+                            <typeMappings>
+                                <typeMapping>double=BigDecimal</typeMapping>
+                            </typeMappings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>${build-helper-maven-plugin.version}</version>

@@ -16,8 +16,6 @@ import jakarta.validation.Payload;
 public @interface ValidCurrency {
     String message() default "{validation.currency.invalid}";
 
-    boolean ignoreCase() default false;
-
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

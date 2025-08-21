@@ -1,4 +1,4 @@
-package io.labs64.ecommerce.v1.dto;
+package io.labs64.ecommerce.v1.model;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -11,14 +11,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.labs64.ecommerce.v1.model.UpdateCartItemRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 
 @DisplayName("CartItemUpdateRequest validation")
-class CartItemUpdateRequestValidationTest {
-
+class UpdateCartItemRequestTest {
     private static Validator validator;
     private static ValidatorFactory factory;
 
@@ -36,22 +39,22 @@ class CartItemUpdateRequestValidationTest {
     @Test
     @DisplayName("fails when title is blank but present")
     void shouldFailWhenTitleIsBlank() {
-        CartItemUpdateRequest item = makeValidItem();
-        item.setTitle("   "); // blank but not null
+        UpdateCartItemRequest item = makeValidItem();
+        item.setTitle("");
 
-        Set<ConstraintViolation<CartItemUpdateRequest>> violations = validator.validate(item);
+        Set<ConstraintViolation<UpdateCartItemRequest>> violations = validator.validate(item);
 
         assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("title")
-                && v.getMessage().equals("{validation.title.notblank}"));
+                && v.getConstraintDescriptor().getAnnotation().annotationType().equals(Size.class));
     }
 
     @Test
     @DisplayName("passes when title is null (optional field)")
     void shouldPassWhenTitleIsNull() {
-        CartItemUpdateRequest item = makeValidItem();
+        UpdateCartItemRequest item = makeValidItem();
         item.setTitle(null);
 
-        Set<ConstraintViolation<CartItemUpdateRequest>> violations = validator.validate(item);
+        Set<ConstraintViolation<UpdateCartItemRequest>> violations = validator.validate(item);
 
         assertThat(violations).isEmpty();
     }
@@ -59,22 +62,22 @@ class CartItemUpdateRequestValidationTest {
     @Test
     @DisplayName("fails when quantity < 1")
     void shouldFailWhenQuantityIsLessThanOne() {
-        CartItemUpdateRequest item = makeValidItem();
+        UpdateCartItemRequest item = makeValidItem();
         item.setQuantity(0);
 
-        Set<ConstraintViolation<CartItemUpdateRequest>> violations = validator.validate(item);
+        Set<ConstraintViolation<UpdateCartItemRequest>> violations = validator.validate(item);
 
         assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("quantity")
-                && v.getMessage().equals("{validation.quantity.min}"));
+                && v.getConstraintDescriptor().getAnnotation().annotationType().equals(Min.class));
     }
 
     @Test
     @DisplayName("passes when quantity is null (optional field)")
     void shouldPassWhenQuantityIsNull() {
-        CartItemUpdateRequest item = makeValidItem();
+        UpdateCartItemRequest item = makeValidItem();
         item.setQuantity(null);
 
-        Set<ConstraintViolation<CartItemUpdateRequest>> violations = validator.validate(item);
+        Set<ConstraintViolation<UpdateCartItemRequest>> violations = validator.validate(item);
 
         assertThat(violations).isEmpty();
     }
@@ -82,22 +85,22 @@ class CartItemUpdateRequestValidationTest {
     @Test
     @DisplayName("fails when price < 0.0")
     void shouldFailWhenPriceIsNegative() {
-        CartItemUpdateRequest item = makeValidItem();
+        UpdateCartItemRequest item = makeValidItem();
         item.setPrice(BigDecimal.valueOf(-1.0));
 
-        Set<ConstraintViolation<CartItemUpdateRequest>> violations = validator.validate(item);
+        Set<ConstraintViolation<UpdateCartItemRequest>> violations = validator.validate(item);
 
-        assertThat(violations).anyMatch(
-                v -> v.getPropertyPath().toString().equals("price") && v.getMessage().equals("{validation.price.min}"));
+        assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("price")
+                && v.getConstraintDescriptor().getAnnotation().annotationType().equals(DecimalMin.class));
     }
 
     @Test
     @DisplayName("passes when price is null (optional field)")
     void shouldPassWhenPriceIsNull() {
-        CartItemUpdateRequest item = makeValidItem();
+        UpdateCartItemRequest item = makeValidItem();
         item.setPrice(null);
 
-        Set<ConstraintViolation<CartItemUpdateRequest>> violations = validator.validate(item);
+        Set<ConstraintViolation<UpdateCartItemRequest>> violations = validator.validate(item);
 
         assertThat(violations).isEmpty();
     }
@@ -105,9 +108,9 @@ class CartItemUpdateRequestValidationTest {
     @Test
     @DisplayName("passes when all fields are valid")
     void shouldPassWhenAllFieldsValid() {
-        CartItemUpdateRequest item = makeValidItem();
+        UpdateCartItemRequest item = makeValidItem();
 
-        Set<ConstraintViolation<CartItemUpdateRequest>> violations = validator.validate(item);
+        Set<ConstraintViolation<UpdateCartItemRequest>> violations = validator.validate(item);
 
         assertThat(violations).isEmpty();
     }
@@ -115,16 +118,16 @@ class CartItemUpdateRequestValidationTest {
     @Test
     @DisplayName("validates meta field successfully")
     void shouldValidateMetaField() {
-        CartItemUpdateRequest item = makeValidItem();
-        item.setMeta(Map.of("extra", "value"));
+        UpdateCartItemRequest item = makeValidItem();
+        item.setExtra(Map.of("extra", "value"));
 
-        Set<ConstraintViolation<CartItemUpdateRequest>> violations = validator.validate(item);
+        Set<ConstraintViolation<UpdateCartItemRequest>> violations = validator.validate(item);
 
         assertThat(violations).isEmpty();
     }
 
-    private CartItemUpdateRequest makeValidItem() {
-        CartItemUpdateRequest item = new CartItemUpdateRequest();
+    private UpdateCartItemRequest makeValidItem() {
+        UpdateCartItemRequest item = new UpdateCartItemRequest();
         item.setItemId("item-123");
         item.setTitle("Sample title");
         item.setDescription("Description text");

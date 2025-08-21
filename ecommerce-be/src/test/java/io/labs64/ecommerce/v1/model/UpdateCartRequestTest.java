@@ -1,4 +1,4 @@
-package io.labs64.ecommerce.v1.dto;
+package io.labs64.ecommerce.v1.model;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,15 +12,18 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.labs64.ecommerce.v1.model.CreateCartItemRequest;
+import io.labs64.ecommerce.v1.model.UpdateCartItemRequest;
+import io.labs64.ecommerce.v1.model.UpdateCartRequest;
 import io.labs64.ecommerce.v1.validation.UniqueItemIds;
+import io.labs64.ecommerce.v1.validation.ValidCurrency;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 @DisplayName("CartUpdateRequest validation")
-class CartUpdateRequestValidationTest {
-
+class UpdateCartRequestTest {
     private static Validator validator;
     private static ValidatorFactory factory;
 
@@ -38,10 +41,10 @@ class CartUpdateRequestValidationTest {
     @Test
     @DisplayName("passes when currency is null (optional field)")
     void shouldPassWhenCurrencyIsNull() {
-        CartUpdateRequest request = new CartUpdateRequest();
+        UpdateCartRequest request = new UpdateCartRequest();
         request.setCurrency(null);
 
-        Set<ConstraintViolation<CartUpdateRequest>> violations = validator.validate(request);
+        Set<ConstraintViolation<UpdateCartRequest>> violations = validator.validate(request);
 
         assertThat(violations).isEmpty();
     }
@@ -49,22 +52,22 @@ class CartUpdateRequestValidationTest {
     @Test
     @DisplayName("fails when currency is invalid")
     void shouldFailWhenCurrencyIsInvalid() {
-        CartUpdateRequest request = new CartUpdateRequest();
+        UpdateCartRequest request = new UpdateCartRequest();
         request.setCurrency("some-currency");
 
-        Set<ConstraintViolation<CartUpdateRequest>> violations = validator.validate(request);
+        Set<ConstraintViolation<UpdateCartRequest>> violations = validator.validate(request);
 
         assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("currency")
-                && v.getMessage().equals("{validation.currency.invalid}"));
+                && v.getConstraintDescriptor().getAnnotation().annotationType().equals(ValidCurrency.class));
     }
 
     @Test
     @DisplayName("passes when currency is valid")
     void shouldPassWhenCurrencyIsValid() {
-        CartUpdateRequest request = new CartUpdateRequest();
+        UpdateCartRequest request = new UpdateCartRequest();
         request.setCurrency("EUR");
 
-        Set<ConstraintViolation<CartUpdateRequest>> violations = validator.validate(request);
+        Set<ConstraintViolation<UpdateCartRequest>> violations = validator.validate(request);
 
         assertThat(violations).isEmpty();
     }
@@ -72,12 +75,12 @@ class CartUpdateRequestValidationTest {
     @Test
     @DisplayName("fails when items contain duplicate IDs")
     void shouldFailWhenItemsContainDuplicateIds() {
-        CartUpdateRequest request = new CartUpdateRequest();
+        UpdateCartRequest request = new UpdateCartRequest();
         request.setCurrency("USD");
         request.setItems(List.of(createItem("item-1", "title-1", 1, BigDecimal.valueOf(10)),
                 createItem("item-1", "title-2", 2, BigDecimal.valueOf(20))));
 
-        Set<ConstraintViolation<CartUpdateRequest>> violations = validator.validate(request);
+        Set<ConstraintViolation<UpdateCartRequest>> violations = validator.validate(request);
 
         assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("items")
                 && v.getConstraintDescriptor().getAnnotation().annotationType().equals(UniqueItemIds.class));
@@ -86,12 +89,12 @@ class CartUpdateRequestValidationTest {
     @Test
     @DisplayName("passes when items are unique")
     void shouldPassWhenItemsAreUnique() {
-        CartUpdateRequest request = new CartUpdateRequest();
+        UpdateCartRequest request = new UpdateCartRequest();
         request.setCurrency("USD");
         request.setItems(List.of(createItem("item-1", "title-1", 1, BigDecimal.valueOf(10)),
                 createItem("item-2", "title-2", 2, BigDecimal.valueOf(20))));
 
-        Set<ConstraintViolation<CartUpdateRequest>> violations = validator.validate(request);
+        Set<ConstraintViolation<UpdateCartRequest>> violations = validator.validate(request);
 
         assertThat(violations).isEmpty();
     }
@@ -99,17 +102,17 @@ class CartUpdateRequestValidationTest {
     @Test
     @DisplayName("validates meta field successfully")
     void shouldValidateMetaField() {
-        CartUpdateRequest request = new CartUpdateRequest();
+        UpdateCartRequest request = new UpdateCartRequest();
         request.setCurrency("USD");
-        request.setMeta(Map.of("someKey", "someValue"));
+        request.setExtra(Map.of("someKey", "someValue"));
 
-        Set<ConstraintViolation<CartUpdateRequest>> violations = validator.validate(request);
+        Set<ConstraintViolation<UpdateCartRequest>> violations = validator.validate(request);
 
         assertThat(violations).isEmpty();
     }
 
-    private CartItemCreateRequest createItem(String id, String title, int qty, BigDecimal price) {
-        CartItemCreateRequest item = new CartItemCreateRequest();
+    private CreateCartItemRequest createItem(String id, String title, int qty, BigDecimal price) {
+        CreateCartItemRequest item = new CreateCartItemRequest();
         item.setItemId(id);
         item.setTitle(title);
         item.setQuantity(qty);

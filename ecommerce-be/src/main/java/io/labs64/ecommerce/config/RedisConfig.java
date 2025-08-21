@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import io.labs64.ecommerce.v1.entity.Cart;
+import io.labs64.ecommerce.v1.model.Cart;
 
 @Configuration
 public class RedisConfig {

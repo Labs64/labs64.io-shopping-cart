@@ -1,7 +1,11 @@
 package io.labs64.ecommerce.v1.service;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,7 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import io.labs64.ecommerce.v1.entity.Cart;
+import io.labs64.ecommerce.v1.model.Cart;
+import io.labs64.ecommerce.v1.model.CartItem;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -69,15 +74,35 @@ public class CartService {
     private void saveCart(final Cart cart) {
         Objects.requireNonNull(cart, "Cart must not be null");
 
-        if (cart.getItems() != null) {
-            cart.getItems().forEach(i -> {
-                if (StringUtils.isBlank(i.getItemId())) {
-                    i.setItemId(UUID.randomUUID().toString());
+        int totalItems = 0;
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        List<CartItem> cartItems = cart.getItems();
+
+        if (cartItems != null) {
+            for (CartItem item : cartItems) {
+                if (StringUtils.isBlank(item.getItemId())) {
+                    item.setItemId(UUID.randomUUID().toString());
                 }
-            });
+
+                Integer quantity = item.getQuantity();
+                BigDecimal price = item.getPrice();
+
+                if (quantity != null) {
+                    totalItems += quantity;
+
+                    if (price != null) {
+                        BigDecimal itemAmount = price.multiply(BigDecimal.valueOf(quantity));
+                        totalAmount = totalAmount.add(itemAmount);
+                    }
+                }
+            }
         }
 
-        OffsetDateTime now = OffsetDateTime.now();
+        cart.setTotalItems(totalItems);
+        cart.setTotalAmount(totalAmount);
+
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
         cart.setUpdatedAt(now);
         cart.setExpiresAt(now.plusSeconds(cartTtl.getSeconds()));
 

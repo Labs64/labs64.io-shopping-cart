@@ -5,7 +5,7 @@ import java.util.Map;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class MetaValidator implements ConstraintValidator<ValidMeta, Map<String, Object>> {
+public class ExtraValidator implements ConstraintValidator<ValidExtra, Map<String, Object>> {
     @Override
     public boolean isValid(Map<String, Object> value, ConstraintValidatorContext context) {
         if (value != null) {

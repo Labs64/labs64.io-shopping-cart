@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import io.labs64.ecommerce.v1.entity.Cart;
+import io.labs64.ecommerce.v1.model.Cart;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CartService unit tests with MockitoExtension")

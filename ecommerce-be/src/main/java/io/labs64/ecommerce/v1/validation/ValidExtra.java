@@ -10,11 +10,11 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = CartIdUUIDValidator.class)
-@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Constraint(validatedBy = ExtraValidator.class)
+@Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-@interface CartIdUUID {
-    String message() default "{validation.cartid.notuuid}";
+public @interface ValidExtra {
+    String message() default "{validation.meta.values}";
 
     Class<?>[] groups() default {};
 
