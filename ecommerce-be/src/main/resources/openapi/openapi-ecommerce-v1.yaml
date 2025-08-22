@@ -7,173 +7,664 @@ servers:
   - url: /api/v1
     description: API base path
 tags:
-  - name: Shopping Cart
-    description: Operations to handle the shopping cart.
+  - name: Cart
+    description: Operations to manage the entire shopping cart resource.
+  - name: Cart Items
+    description: Operations to manage individual items within a specific shopping cart.
 paths:
   /cart:
     post:
-      summary: Store shopping cart
-      operationId: saveCart
+      summary: Create a new shopping cart
+      operationId: createCart
       tags:
         - Cart
-      description: Receives a complete shopping cart entity to initiate the shopping cart.
+      description: Creates a new shopping cart resource with optional initial items and user-defined fields.
       requestBody:
-        description: The complete shopping cart entity to be processed.
+        description: Payload to create a shopping cart.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Cart'
+              $ref: '#/components/schemas/CreateCartRequest'
             example:
-              cartId: "abcd1234-efgh-5678-ijkl-901234567890"
-              userId: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+              userId: "user-987"
+              currency: "USD"
+              extra:
+                source: "web_portal"
+                promoCode: "SUMMER2025"
               items:
-                - productId: "E12345678"
-                  productName: "Basic License"
-                  quantity: 1
-                  price: 1200.00
-                - productId: "E87654321"
-                  productName: "Premium License"
-                  quantity: 2
-                  price: 25.00
-              totalItems: 3
-              totalAmount: 1250.00
+                - title: "Enterprise License"
+                  description: "Full-featured enterprise license for 1 year."
+                  quantity: 3
+                  price: 149.99
+                  extra:
+                    licenseType: "FEATURE"
+                    validity: "1 year"
+                    supportIncluded: true
       responses:
         '201':
-          description: Shopping Cart published successfully
+          description: Shopping cart created successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
-        '500':
-          description: Failed to publish Shopping Cart
-          content:
-            text/plain:
-              schema:
-                type: string
-  /cart/{cartId}:
-    get:
-      summary: Retrieve a shopping cart by its ID
-      operationId: getCartById
-      tags:
-        - Cart
-      description: Fetches the details of a specific shopping cart using its unique identifier.
-      parameters:
-        - name: cartId
-          in: path
-          description: Unique identifier of the shopping cart to retrieve.
-          required: true
-          schema:
-            type: string
-            format: uuid
-          example: "abcd1234-efgh-5678-ijkl-901234567890"
-      responses:
-        '200':
-          description: Shopping cart found and returned successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Cart'
-        '404':
-          description: Shopping cart with the specified ID not found.
+              example:
+                cartId: "550e8400-e29b-41d4-a716-446655440000"
+                userId: "user-987"
+                currency: "USD"
+                extra:
+                  source: "web_portal"
+                  promoCode: "SUMMER2025"
+                items:
+                  - itemId: "item-123"
+                    title: "Enterprise License"
+                    description: "Full-featured enterprise license for 1 year."
+                    quantity: 3
+                    price: 149.99
+                    extra:
+                      licenseType: "FEATURE"
+                      validity: "1 year"
+                      supportIncluded: true
+                totalItems: 3
+                totalAmount: 449.97
+                createdAt: "2025-08-18T10:15:30Z"
+                updatedAt: "2025-08-19T09:45:10Z"
+                expiresAt: "2025-08-19T12:00:00Z"
+        '400':
+          description: Invalid request payload.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               example:
-                code: "CART_NOT_FOUND"
-                message: "Shopping cart with ID 'abcd1234-efgh-5678-ijkl-901234567890' not found."
-                timestamp: "2025-08-07T12:34:56.123Z"
-                traceId: "abc123xyz"
-        '500':
-          description: Internal server error (e.g., failed to retrieve cart data).
+                code: "VALIDATION_ERROR"
+                message: "Currency is invalid. Allowed currencies: USD, EUR"
+                timestamp: "2025-08-19T12:34:56Z"
+                traceId: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+
+  /cart/{cartId}:
+    get:
+      summary: Retrieve a shopping cart by its ID
+      operationId: getCart
+      tags:
+        - Cart
+      description: Returns the details of a shopping cart identified by its ID.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: UUID of the cart to retrieve.
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        '200':
+          description: Shopping cart found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+              example:
+                cartId: "550e8400-e29b-41d4-a716-446655440000"
+                userId: "user-987"
+                currency: "USD"
+                extra:
+                  source: "web_portal"
+                  promoCode: "SUMMER2025"
+                items:
+                  - itemId: "item-123"
+                    title: "NetLicensing Pro License"
+                    description: "Full-featured professional license for 1 user."
+                    quantity: 3
+                    price: 149.99
+                    extra:
+                      licenseType: "Pro"
+                      validity: "1 year"
+                      supportIncluded: true
+                totalItems: 3
+                totalAmount: 449.97
+                createdAt: "2025-08-18T10:15:30Z"
+                updatedAt: "2025-08-19T09:45:10Z"
+                expiresAt: "2025-08-19T12:00:00Z"
+        '404':
+          description: Shopping cart not found.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: "NOT_FOUND"
+                message: "Shopping cart with ID '550e8400-e29b-41d4-a716-446655440000' was not found."
+                timestamp: "2025-08-19T12:34:56Z"
+                traceId: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+
+    patch:
+      summary: Partially update a shopping cart
+      operationId: updateCart
+      tags:
+        - Cart
+      description: Updates specific fields of a shopping cart without replacing the entire resource.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: UUID of the cart to update.
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440000"
+      requestBody:
+        description: Fields to update in the cart.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCartRequest'
+            example:
+              currency: "EUR"
+              extra:
+                promoCode: "AUTUMN2025"
+              items:
+                - itemId: "item-123"
+                  quantity: 5
+                  extra:
+                    licenseType: "Enterprise"
+                    validity: "2 years"
+                    supportIncluded: true
+      responses:
+        '200':
+          description: Shopping cart updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+              example:
+                cartId: "550e8400-e29b-41d4-a716-446655440000"
+                userId: "user-987"
+                currency: "EUR"
+                extra:
+                  promoCode: "AUTUMN2025"
+                items:
+                  - itemId: "item-123"
+                    title: "NetLicensing Pro License"
+                    description: "Full-featured professional license for 1 user."
+                    quantity: 5
+                    price: 149.99
+                    extra:
+                      licenseType: "Enterprise"
+                      validity: "2 years"
+                      supportIncluded: true
+                totalItems: 5
+                totalAmount: 749.95
+                createdAt: "2025-08-18T10:15:30Z"
+                updatedAt: "2025-08-19T12:30:00Z"
+                expiresAt: "2025-08-19T12:00:00Z"
+        '400':
+          description: Invalid request payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: "VALIDATION_ERROR"
+                message: "Currency is invalid. Allowed currencies: USD, EUR"
+                timestamp: "2025-08-19T12:34:56Z"
+                traceId: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        '404':
+          description: Shopping cart not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: "NOT_FOUND"
+                message: "Shopping cart with ID '550e8400-e29b-41d4-a716-446655440000' was not found."
+                timestamp: "2025-08-19T12:34:56Z"
+                traceId: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+
+    delete:
+      summary: Delete a shopping cart
+      operationId: deleteCart
+      tags:
+        - Cart
+      description: Deletes a shopping cart identified by its ID.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: UUID of the cart to delete.
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        '204':
+          description: Shopping cart deleted successfully.
+
+  /cart/{cartId}/item:
+    post:
+      summary: Add a new item to the shopping cart
+      operationId: createCartItem
+      tags:
+        - Cart Items
+      description: Adds a new item to the shopping cart identified by cartId.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: UUID of the cart where the item will be added.
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440000"
+      requestBody:
+        description: Payload containing details of the item to add.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCartItemRequest'
+            example:
+              title: "Enterprise License"
+              description: "Full-featured enterprise license for 1 year."
+              quantity: 3
+              price: 149.99
+              extra:
+                licenseType: "FEATURE"
+                validity: "1 year"
+                supportIncluded: true
+      responses:
+        '201':
+          description: Item added successfully to the cart.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+              example:
+                itemId: "item-123"
+                title: "Enterprise License"
+                description: "Full-featured enterprise license for 1 year."
+                quantity: 3
+                price: 149.99
+                extra:
+                  licenseType: "FEATURE"
+                  validity: "1 year"
+                  supportIncluded: true
+        '400':
+          description: Invalid request payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: "VALIDATION_ERROR"
+                message: "Quantity is required"
+                timestamp: "2025-08-19T12:34:56Z"
+                traceId: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        '404':
+          description: Shopping cart not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: "NOT_FOUND"
+                message: "Shopping cart with ID '550e8400-e29b-41d4-a716-446655440000' was not found."
+                timestamp: "2025-08-19T12:34:56Z"
+                traceId: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+
+  /cart/{cartId}/item/{itemId}:
+    patch:
+      summary: Partially update a cart item
+      operationId: updateCartItem
+      tags:
+        - Cart Items
+      description: Updates specific fields of an item in the shopping cart without replacing the entire item.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: UUID of the cart containing the item.
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440000"
+        - name: itemId
+          in: path
+          required: true
+          description: UUID of the item to update.
+          schema:
+            type: string
+            example: "item-123"
+      requestBody:
+        description: Fields to update in the cart item.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCartItemRequest'
+            example:
+              quantity: 5
+              extra:
+                licenseType: "SUBSCRIPTION"
+                validity: "2 years"
+                supportIncluded: true
+      responses:
+        '200':
+          description: Item updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+              example:
+                itemId: "item-123"
+                title: "Enterprise License"
+                description: "Full-featured enterprise license for 1 year."
+                quantity: 5
+                price: 149.99
+                extra:
+                  licenseType: "SUBSCRIPTION"
+                  validity: "2 years"
+                  supportIncluded: true
+        '400':
+          description: Invalid request payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: "VALIDATION_ERROR"
+                message: "Quantity must be at least 1"
+                timestamp: "2025-08-19T12:34:56Z"
+                traceId: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        '404':
+          description: Cart or item not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: "NOT_FOUND"
+                message: "Item with ID 'item-123' in cart '550e8400-e29b-41d4-a716-446655440000' was not found."
+                timestamp: "2025-08-19T12:34:56Z"
+                traceId: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+
+    delete:
+      summary: Remove a cart item
+      operationId: deleteCartItem
+      tags:
+        - Cart Items
+      description: Deletes a specific item from the shopping cart.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: UUID of the cart containing the item.
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440000"
+        - name: itemId
+          in: path
+          required: true
+          description: UUID of the item to delete.
+          schema:
+            type: string
+            example: "item-123"
+      responses:
+        '204':
+          description: Item removed successfully.
+
 components:
   schemas:
+    ErrorCode:
+      type: string
+      description: Unique error code identifying the type of error.
+      enum:
+        - NOT_FOUND
+        - INTERNAL_ERROR
+        - VALIDATION_ERROR
+      example: "NOT_FOUND"
+
+    CartItem:
+      type: object
+      description: A cart item with all details returned from the API.
+      properties:
+        itemId:
+          type: string
+          description: Unique identifier of the cart item.
+          example: "item-123"
+        title:
+          type: string
+          description: Name of the item.
+          minLength: 1
+          maxLength: 255
+          example: "Enterprise License"
+        description:
+          type: string
+          description: Detailed description of the item.
+          maxLength: 1000
+          example: "Full-featured enterprise license for 1 year."
+        quantity:
+          type: integer
+          description: Number of units of this item.
+          minimum: 1
+          example: 3
+        price:
+          type: number
+          format: double
+          description: Unit price of the item in the cart's currency.
+          minimum: 0
+          example: 149.99
+        extra:
+          type: object
+          description: Custom user-defined fields for the item.
+          additionalProperties: true
+          example:
+            licenseType: "FEATURE"
+            validity: "1 year"
+            supportIncluded: true
+      example:
+        itemId: "item-123"
+        title: "Enterprise License"
+        description: "Full-featured enterprise license for 1 year."
+        quantity: 3
+        price: 149.99
+        extra:
+          licenseType: "FEATURE"
+          validity: "1 year"
+          supportIncluded: true
+
     Cart:
       type: object
-      description: Represents a shopping cart.
-      required:
-        - cartId
-        - items
-        - totalItems
-        - totalAmount
+      description: A shopping cart with all details returned from the API.
       properties:
         cartId:
           type: string
           format: uuid
-          description: Unique identifier for this shopping cart. This will often serve as the sessionId for shopping cart correlation.
-          example: "abcd1234-efgh-5678-ijkl-901234567890"
+          description: Unique identifier of the shopping cart.
+          readOnly: true
+          example: "550e8400-e29b-41d4-a716-446655440000"
         userId:
           type: string
-          description: (Optional) ID of the user associated with the cart.
-          example: "V12345678"
+          description: Unique identifier of the user owning the cart.
+          minLength: 3
+          maxLength: 50
+          example: "user-987"
+        currency:
+          type: string
+          description: Currency in ISO 4217 format
+          example: USD
         items:
           type: array
+          description: List of items currently in the cart.
           items:
             $ref: '#/components/schemas/CartItem'
-          description: List of items currently in the cart.
-          minItems: 1
+        extra:
+          type: object
+          description: Custom user-defined fields associated with the cart.
+          additionalProperties: true
+          example:
+            source: "web_portal"
+            promoCode: "SUMMER2025"
         totalItems:
           type: integer
-          description: Total number of distinct items in the cart.
+          description: Total number of items in the cart.
           minimum: 0
+          readOnly: true
+          example: 3
         totalAmount:
           type: number
-          format: float
+          format: double
           description: Total monetary value of all items in the cart.
           minimum: 0
-    CartItem:
-      type: object
-      description: Represents a single item in the shopping cart.
-      required:
-        - productId
-        - productName
-        - quantity
-        - price
-      properties:
-        productId:
+          readOnly: true
+          example: 449.97
+        expiresAt:
           type: string
-          description: Unique identifier of the product.
-          example: "E12345678"
-        productName:
+          format: date-time
+          readOnly: true
+          description: Expiration date/time of the cart, if any.
+          example: "2025-08-19T12:00:00Z"
+        createdAt:
           type: string
-          description: Name of the product.
-          example: "Basic License"
-        quantity:
-          type: integer
-          minimum: 1
-          description: Quantity of the product in the cart.
-          example: 1
-        price:
-          type: number
-          format: float
-          description: Unit price of the product at the time it was added to the cart.
-          minimum: 0
-          example: 1200.00
+          format: date-time
+          description: Timestamp when the cart was created.
+          readOnly: true
+          example: "2025-08-18T10:15:30Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the cart was last updated.
+          readOnly: true
+          example: "2025-08-19T09:45:10Z"
+      example:
+        cartId: "550e8400-e29b-41d4-a716-446655440000"
+        userId: "user-987"
+        currency: "USD"
+        extra:
+          source: "web_portal"
+          promoCode: "SUMMER2025"
+        items:
+          - itemId: "item-123"
+            title: "Enterprise License"
+            description: "Full-featured enterprise license for 1 year"
+            quantity: 3
+            price: 149.99
+            extra:
+              licenseType: "FEATURE"
+              validity: "1 year"
+              supportIncluded: true
+        totalItems: 3
+        totalAmount: 449.97
+        expiresAt: "2025-08-19T12:00:00Z"
+        createdAt: "2025-08-18T10:15:30Z"
+        updatedAt: "2025-08-19T09:45:10Z"
+
+    CreateCartRequest:
+      allOf:
+        - $ref: '#/components/schemas/Cart'
+        - type: object
+          description: Payload for creating a new shopping cart.
+          required:
+            - currency
+          properties:
+            items:
+              type: array
+              description: Initial items to add to the new cart.
+              items:
+                $ref: '#/components/schemas/CreateCartItemRequest'
+          example:
+            userId: "user-987"
+            currency: "USD"
+            extra:
+              source: "web_portal"
+              promoCode: "SUMMER2025"
+            items:
+              - title: "Enterprise License"
+                description: "Full-featured enterprise license for 1 year."
+                quantity: 3
+                price: 149.99
+                extra:
+                  licenseType: "FEATURE"
+                  validity: "1 year"
+                  supportIncluded: true
+
+    UpdateCartRequest:
+      allOf:
+        - $ref: '#/components/schemas/Cart'
+        - type: object
+          description: Payload for partially updating an existing shopping cart.
+          properties:
+            items:
+              type: array
+              description: Items to update or add in the cart.
+              items:
+                $ref: '#/components/schemas/CreateCartItemRequest'
+          example:
+            currency: "EUR"
+            extra:
+              promoCode: "AUTUMN2025"
+            items:
+              - itemId: "item-123"
+                quantity: 5
+                extra:
+                  licenseType: "Enterprise"
+                  validity: "2 years"
+                  supportIncluded: true
+
+    CreateCartItemRequest:
+      allOf:
+        - $ref: '#/components/schemas/CartItem'
+        - type: object
+          description: Payload for adding a new item to a cart.
+          required:
+            - title
+            - quantity
+            - price
+          example:
+            title: "Enterprise License"
+            description: "Full-featured enterprise license for 1 year."
+            quantity: 3
+            price: 149.99
+            extra:
+              licenseType: "FEATURE"
+              validity: "1 year"
+              supportIncluded: true
+
+    UpdateCartItemRequest:
+      allOf:
+        - $ref: '#/components/schemas/CartItem'
+        - type: object
+          description: Payload for partially updating an existing cart item.
+          example:
+            quantity: 5
+            price: 139.99
+            extra:
+              licenseType: "Enterprise"
+              validity: "2 years"
+              supportIncluded: true
+
     ErrorResponse:
       type: object
-      description: Standard error response format.
+      description: Standard error response returned by the API.
       required:
         - code
         - message
       properties:
         code:
-          type: string
-          description: A unique error code.
-          example: "INVALID_CART_DATA"
+          $ref: '#/components/schemas/ErrorCode'
         message:
           type: string
-          description: A human-readable error message.
-          example: "The provided cart data is invalid or empty."
+          description: Human-readable message describing the error.
+          example: "Shopping cart with ID '550e8400-e29b-41d4-a716-446655440000' was not found."
         timestamp:
           type: string
           format: date-time
-          example: 2025-08-07T12:34:56.123Z
+          description: Time when the error occurred.
+          example: "2025-08-19T12:34:56Z"
         traceId:
           type: string
-          description: Request correlation ID
-          example: "abc123xyz"
+          description: Optional trace ID for correlating logs or debugging.
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"

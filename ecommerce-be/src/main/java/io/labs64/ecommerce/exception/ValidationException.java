@@ -8,11 +8,13 @@ import lombok.Getter;
 
 @Getter
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class NotFoundException extends RuntimeException {
+public class ValidationException extends RuntimeException {
     private final ErrorCode errorCode;
+    private final String field;
 
-    public NotFoundException(String message) {
+    public ValidationException(String field, String message) {
         super(message);
-        this.errorCode = ErrorCode.NOT_FOUND;
+        this.field = field;
+        this.errorCode = ErrorCode.VALIDATION_ERROR;
     }
 }
