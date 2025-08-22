@@ -1,6 +1,7 @@
 package io.labs64.ecommerce.v1.service;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,7 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import io.labs64.ecommerce.config.CartProperties;
 import io.labs64.ecommerce.v1.model.Cart;
+import io.labs64.ecommerce.v1.validator.CartValidator;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CartService unit tests with MockitoExtension")
@@ -29,14 +32,20 @@ class CartServiceTest {
     @Mock
     private ValueOperations<String, Cart> valueOperations;
 
-    private CartService cartService;
+    @Mock
+    private CartValidator cartValidator; // замоканий валідатор
 
-    private Duration cartTtl;
+    private CartService cartService;
+    private CartProperties properties;
 
     @BeforeEach
     void setUp() {
-        cartTtl = Duration.ofHours(1);
-        cartService = new CartService(redisTemplate, "test:cart:", cartTtl);
+        properties = new CartProperties();
+        properties.setPrefix("test:cart:");
+        properties.setTtl(Duration.ofHours(1));
+        properties.setCurrency(List.of("USD", "EUR"));
+
+        cartService = new CartService(redisTemplate, properties, cartValidator);
     }
 
     @Test
@@ -45,7 +54,6 @@ class CartServiceTest {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
         Cart cart = new Cart();
-
         Cart created = cartService.createCart(cart);
 
         assertThat(created.getCartId()).isNotNull();
@@ -53,7 +61,8 @@ class CartServiceTest {
         assertThat(created.getUpdatedAt()).isNotNull();
         assertThat(created.getExpiresAt()).isAfter(created.getUpdatedAt());
 
-        verify(valueOperations).set(eq("test:cart:" + created.getCartId()), eq(created), eq(cartTtl));
+        verify(cartValidator).validate(cart);
+        verify(valueOperations).set(eq("test:cart:" + created.getCartId()), eq(created), eq(properties.getTtl()));
     }
 
     @Test
@@ -65,7 +74,6 @@ class CartServiceTest {
         when(valueOperations.get("test:cart:" + cartId)).thenReturn(null);
 
         Optional<Cart> result = cartService.getCart(cartId);
-
         assertThat(result).isEmpty();
     }
 
@@ -80,7 +88,6 @@ class CartServiceTest {
         when(valueOperations.get("test:cart:" + cartId)).thenReturn(cart);
 
         Optional<Cart> result = cartService.getCart(cartId);
-
         assertThat(result).contains(cart);
     }
 
@@ -99,7 +106,8 @@ class CartServiceTest {
         assertThat(updated).isPresent();
         assertThat(updated.get().getUserId()).isEqualTo("user-123");
 
-        verify(valueOperations).set(eq("test:cart:" + cartId), eq(cart), eq(cartTtl));
+        verify(cartValidator).validate(cart);
+        verify(valueOperations).set(eq("test:cart:" + cartId), eq(cart), eq(properties.getTtl()));
     }
 
     @Test
@@ -119,7 +127,6 @@ class CartServiceTest {
         when(redisTemplate.getExpire("test:cart:" + cartId)).thenReturn(3600L);
 
         Optional<Duration> ttl = cartService.getCartTTL(cartId);
-
         assertThat(ttl).contains(Duration.ofHours(1));
     }
 
@@ -130,7 +137,6 @@ class CartServiceTest {
         when(redisTemplate.getExpire("test:cart:" + cartId)).thenReturn(-2L);
 
         Optional<Duration> ttl = cartService.getCartTTL(cartId);
-
         assertThat(ttl).isEmpty();
     }
 }

@@ -495,7 +495,6 @@ components:
         currency:
           type: string
           description: Currency in ISO 4217 format
-          x-field-extra-annotation: "@io.labs64.ecommerce.v1.validation.ValidCurrency"
           example: USD
         items:
           type: array
@@ -506,7 +505,6 @@ components:
           type: object
           description: Custom user-defined fields associated with the cart.
           additionalProperties: true
-          x-field-extra-annotation: "@io.labs64.ecommerce.v1.validation.ValidExtra"
           example:
             source: "web_portal"
             promoCode: "SUMMER2025"
@@ -575,7 +573,6 @@ components:
             items:
               type: array
               description: Initial items to add to the new cart.
-              x-field-extra-annotation: "@io.labs64.ecommerce.v1.validation.UniqueItemIds"
               items:
                 $ref: '#/components/schemas/CreateCartItemRequest'
           example:
@@ -603,7 +600,6 @@ components:
             items:
               type: array
               description: Items to update or add in the cart.
-              x-field-extra-annotation: "@io.labs64.ecommerce.v1.validation.UniqueItemIds"
               items:
                 $ref: '#/components/schemas/CreateCartItemRequest'
           example:

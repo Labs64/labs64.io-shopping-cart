@@ -14,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.labs64.ecommerce.v1.model.CreateCartItemRequest;
 import io.labs64.ecommerce.v1.model.CreateCartRequest;
-import io.labs64.ecommerce.v1.validation.UniqueItemIds;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -50,18 +49,6 @@ class CreateCartRequestTest {
     }
 
     @Test
-    @DisplayName("fails when currency is invalid")
-    void shouldFailWhenCurrencyIsInvalid() {
-        CreateCartRequest request = new CreateCartRequest();
-        request.setCurrency("some-currency");
-
-        Set<ConstraintViolation<CreateCartRequest>> violations = validator.validate(request);
-
-        assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("currency")
-                && v.getMessage().equals("{validation.currency.invalid}"));
-    }
-
-    @Test
     @DisplayName("passes when currency is valid")
     void shouldPassWhenCurrencyIsValid() {
         CreateCartRequest request = new CreateCartRequest();
@@ -70,20 +57,6 @@ class CreateCartRequestTest {
         Set<ConstraintViolation<CreateCartRequest>> violations = validator.validate(request);
 
         assertThat(violations).isEmpty();
-    }
-
-    @Test
-    @DisplayName("fails when items contain duplicate IDs")
-    void shouldFailWhenItemsContainDuplicateIds() {
-        CreateCartRequest request = new CreateCartRequest();
-        request.setCurrency("USD");
-        request.setItems(List.of(createItem("item-1", "title-1", 1, BigDecimal.valueOf(10)),
-                createItem("item-1", "title-2", 2, BigDecimal.valueOf(20))));
-
-        Set<ConstraintViolation<CreateCartRequest>> violations = validator.validate(request);
-
-        assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("items")
-                && v.getConstraintDescriptor().getAnnotation().annotationType().equals(UniqueItemIds.class));
     }
 
     @Test

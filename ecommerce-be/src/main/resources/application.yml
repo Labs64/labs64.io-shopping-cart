@@ -74,3 +74,6 @@ spring:
 cart:
   prefix: "ecommerce:cart:"
   ttl: PT6H
+  currency:
+    - USD
+    - EUR

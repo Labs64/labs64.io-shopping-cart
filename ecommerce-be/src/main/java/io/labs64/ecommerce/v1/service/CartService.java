@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,12 +11,14 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import io.labs64.ecommerce.config.CartProperties;
+import io.labs64.ecommerce.exception.ValidationException;
 import io.labs64.ecommerce.v1.model.Cart;
 import io.labs64.ecommerce.v1.model.CartItem;
+import io.labs64.ecommerce.v1.validator.CartValidator;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -25,15 +26,13 @@ import lombok.extern.slf4j.Slf4j;
 public class CartService {
 
     private final RedisTemplate<String, Cart> redisTemplate;
+    private final CartProperties properties;
+    private final CartValidator validator;
 
-    private final Duration cartTtl;
-    private final String cartPrefix;
-
-    public CartService(RedisTemplate<String, Cart> redisTemplate,
-            @Value("${cart.prefix:ecommerce:cart:}") String cartPrefix, @Value("${cart.ttl:PT6H}") Duration cartTtl) {
+    public CartService(RedisTemplate<String, Cart> redisTemplate, CartProperties properties, CartValidator validator) {
         this.redisTemplate = redisTemplate;
-        this.cartPrefix = cartPrefix;
-        this.cartTtl = cartTtl;
+        this.properties = properties;
+        this.validator = validator;
     }
 
     public Optional<Cart> getCart(final UUID cartId) {
@@ -104,12 +103,14 @@ public class CartService {
 
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
         cart.setUpdatedAt(now);
-        cart.setExpiresAt(now.plusSeconds(cartTtl.getSeconds()));
+        cart.setExpiresAt(now.plusSeconds(properties.getTtl().getSeconds()));
 
-        redisTemplate.opsForValue().set(getCartKey(cart.getCartId()), cart, cartTtl);
+        validator.validate(cart);
+
+        redisTemplate.opsForValue().set(getCartKey(cart.getCartId()), cart, properties.getTtl());
     }
 
     private String getCartKey(final UUID cartId) {
-        return cartPrefix + cartId;
+        return properties.getPrefix() + cartId;
     }
 }
