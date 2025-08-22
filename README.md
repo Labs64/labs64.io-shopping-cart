@@ -11,10 +11,6 @@ Robust e-commerce engine designed to accelerate digital sales. Features include 
 
 * TODO
 
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Labs64/labs64.io-ecommerce&type=Date)](https://www.star-history.com/#Labs64/labs64.io-ecommerce&Date)
-
 ## Customize configuration
 
 See [Vite Configuration Reference](https://vite.dev/config/).
@@ -64,3 +60,7 @@ npm run test:e2e
 ```sh
 npm run lint
 ```
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Labs64/labs64.io-ecommerce&type=Date)](https://www.star-history.com/#Labs64/labs64.io-ecommerce&Date)
