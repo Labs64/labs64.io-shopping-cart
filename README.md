@@ -3,7 +3,7 @@
 # Labs64.IO :: Shopping Cart
 ## Commerce-Ready Platform for Digital Sales Enablement
 
-![Docker Image Version](https://img.shields.io/docker/v/labs64/ecommerce?logo=docker&logoColor=%23E14817&color=%23E14817) - TODO
+![Docker Image Version](https://img.shields.io/docker/v/labs64/shopping-cart?logo=docker&logoColor=%23E14817&color=%23E14817) - TODO
 
 Robust e-commerce engine designed to accelerate digital sales. Features include product catalogs, shopping carts, secure checkout, and order management — all seamlessly integrated to drive conversion and revenue growth.
 
@@ -63,4 +63,4 @@ npm run lint
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Labs64/labs64.io-ecommerce&type=Date)](https://www.star-history.com/#Labs64/labs64.io-ecommerce&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Labs64/labs64.io-shopping-cart&type=Date)](https://www.star-history.com/#Labs64/labs64.io-ecommerce&Date)
