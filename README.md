@@ -63,4 +63,4 @@ npm run lint
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Labs64/labs64.io-shopping-cart&type=Date)](https://www.star-history.com/#Labs64/labs64.io-ecommerce&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Labs64/labs64.io-shopping-cart&type=Date)](https://www.star-history.com/#Labs64/labs64.io-shopping-cart&Date)
