@@ -418,15 +418,6 @@ paths:
 
 components:
   schemas:
-    ErrorCode:
-      type: string
-      description: Unique error code identifying the type of error.
-      enum:
-        - NOT_FOUND
-        - INTERNAL_ERROR
-        - VALIDATION_ERROR
-      example: "NOT_FOUND"
-
     CartItem:
       type: object
       description: A cart item with all details returned from the API.
@@ -645,6 +636,15 @@ components:
               licenseType: "Enterprise"
               validity: "2 years"
               supportIncluded: true
+
+    ErrorCode:
+      type: string
+      description: Unique error code identifying the type of error.
+      enum:
+        - NOT_FOUND
+        - INTERNAL_ERROR
+        - VALIDATION_ERROR
+      example: "NOT_FOUND"
 
     ErrorResponse:
       type: object
