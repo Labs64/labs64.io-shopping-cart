@@ -449,13 +449,7 @@ components:
           minimum: 0
           example: 149.99
         extra:
-          type: object
-          description: Custom user-defined fields for the item.
-          additionalProperties: true
-          example:
-            licenseType: "FEATURE"
-            validity: "1 year"
-            supportIncluded: true
+          $ref: '#/components/schemas/Extra'
       example:
         itemId: "item-123"
         title: "Enterprise License"
@@ -493,12 +487,7 @@ components:
           items:
             $ref: '#/components/schemas/CartItem'
         extra:
-          type: object
-          description: Custom user-defined fields associated with the cart.
-          additionalProperties: true
-          example:
-            source: "web_portal"
-            promoCode: "SUMMER2025"
+          $ref: '#/components/schemas/Extra'
         totalItems:
           type: integer
           description: Total number of items in the cart.
@@ -566,6 +555,8 @@ components:
               description: Initial items to add to the new cart.
               items:
                 $ref: '#/components/schemas/CreateCartItemRequest'
+            extra:
+              $ref: '#/components/schemas/Extra'
           example:
             userId: "user-987"
             currency: "USD"
@@ -593,6 +584,8 @@ components:
               description: Items to update or add in the cart.
               items:
                 $ref: '#/components/schemas/CreateCartItemRequest'
+            extra:
+              $ref: '#/components/schemas/Extra'
           example:
             currency: "EUR"
             extra:
@@ -614,6 +607,9 @@ components:
             - title
             - quantity
             - price
+          properties:
+            extra:
+              $ref: '#/components/schemas/Extra'
           example:
             title: "Enterprise License"
             description: "Full-featured enterprise license for 1 year."
@@ -629,6 +625,9 @@ components:
         - $ref: '#/components/schemas/CartItem'
         - type: object
           description: Payload for partially updating an existing cart item.
+          properties:
+            extra:
+              $ref: '#/components/schemas/Extra'
           example:
             quantity: 5
             price: 139.99
@@ -636,6 +635,14 @@ components:
               licenseType: "Enterprise"
               validity: "2 years"
               supportIncluded: true
+
+    Extra:
+      type: object
+      description: Custom user-defined fields associated with the cart.
+      additionalProperties: true
+      example:
+        source: "web_portal"
+        promoCode: "SUMMER2025"
 
     ErrorCode:
       type: string
