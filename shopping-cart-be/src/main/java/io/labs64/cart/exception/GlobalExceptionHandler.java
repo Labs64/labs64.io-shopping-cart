@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import io.labs64.cart.v1.model.ErrorCode;
 import io.labs64.cart.v1.model.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -20,6 +22,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFound(final NotFoundException ex, final HttpServletRequest request) {
         ErrorResponse error = buildErrorResponse(ex.getErrorCode(), ex.getMessage(), request);
 
+        log.error(ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
@@ -37,6 +40,7 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorMessage, request);
 
+        log.error(ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
@@ -47,6 +51,7 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = buildErrorResponse(ex.getErrorCode(), errorMessage, request);
 
+        log.error(ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
@@ -54,6 +59,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleOther(final Exception ex, final HttpServletRequest request) {
         ErrorResponse error = buildErrorResponse(ErrorCode.INTERNAL_ERROR, "Unexpected error", request);
 
+        log.error(ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
