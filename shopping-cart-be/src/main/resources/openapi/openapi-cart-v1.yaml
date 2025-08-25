@@ -638,7 +638,7 @@ components:
 
     Extra:
       type: object
-      description: Custom user-defined fields associated with the cart.
+      description: Custom user-defined fields.
       additionalProperties: true
       example:
         source: "web_portal"
